@@ -6,8 +6,11 @@ import {
     LogoutOutlined,
 } from '@ant-design/icons'
 import './index.scss'
-import {Outlet} from "react-router-dom";
+import {Outlet, useLocation} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
+import {fetchUseInfo} from "@/store/modules/user.js";
+import {useDispatch, useSelector} from "react-redux";
 
 const { Header, Sider } = Layout
 
@@ -24,7 +27,7 @@ const items = [
     },
     {
         label: '创建文章',
-        key: 'publish',
+        key: '/publish',
         icon: <EditOutlined />,
     },
 ]
@@ -34,12 +37,19 @@ const GeekLayout = () => {
     const onMenuClick =({key}) => {
         navigate(key)
     }
+
+    const {pathname} = useLocation()
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(fetchUseInfo())
+    }, [dispatch]);
+    const username = useSelector(state=>state.user.userInfo.name)
     return (
         <Layout>
             <Header className="header">
                 <div className="logo" />
                 <div className="user-info">
-                    <span className="user-name">柴柴老师</span>
+                    <span className="user-name">{username}</span>
                     <span className="user-logout">
             <Popconfirm title="是否确认退出？" okText="退出" cancelText="取消">
               <LogoutOutlined /> 退出
@@ -53,7 +63,7 @@ const GeekLayout = () => {
                         onClick={onMenuClick}
                         mode="inline"
                         theme="dark"
-                        defaultSelectedKeys={['1']}
+                        selectedKeys={pathname}
                         items={items}
                         style={{ height: '100%', borderRight: 0 }}></Menu>
                 </Sider>
