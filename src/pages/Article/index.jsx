@@ -103,7 +103,6 @@ const Article = () => {
             setList(res.data.results)
             setCount(res.data.total_count)
         }
-
         getList()
     }, [reqData]);
     const onFinsh = (val) => {
@@ -115,6 +114,13 @@ const Article = () => {
            end_pubdate: val.date[1].format('YYYY-MM-DD'),
        })
         //重新拉取文章列表 复用逻辑
+    }
+    //分页
+    const onPageChange = (page) => {
+        setReqData({
+            ...reqData,
+            page
+        })
     }
     return (
         <div>
@@ -164,7 +170,11 @@ const Article = () => {
             </Card>
             {/*        */}
             <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
-                <Table rowKey="id" columns={columns} dataSource={list}/>
+                <Table rowKey="id" columns={columns} dataSource={list} pagination={{
+                    total:count,
+                    pageSize:reqData.per_page,
+                    onChange:onPageChange
+                }}/>
             </Card>
         </div>
     )
