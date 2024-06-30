@@ -1,5 +1,5 @@
 import {
-    Card, Breadcrumb, Form, Button, Radio, Input, Upload, Space, Select
+    Card, Breadcrumb, Form, Button, Radio, Input, Upload, Space, Select, message
 } from 'antd'
 import {PlusOutlined} from '@ant-design/icons'
 import {Link} from 'react-router-dom'
@@ -23,13 +23,15 @@ const Publish = () => {
     }, [])
     //提交表单
     const onFinsh = (val) => {
+        //校验图片数量是否和模式相等
+        if(imageList.length!==imageType) return message.warning('封面数量不匹配！')
         const {title,content,channel_id} = val
         const reqData = {
             title: title,
             content: content,
             cover: {
-                type: 0 ,
-                images: []
+                type: imageType ,
+                images: imageList.map(item=>item.response.data.url)
             },
             channel_id: channel_id
         }
