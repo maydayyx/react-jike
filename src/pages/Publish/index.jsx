@@ -6,21 +6,14 @@ import {Link} from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import {useEffect, useState} from "react";
-import {channelAPI, createArticleAPI} from "@/apis/article.js";
+import {useState} from "react";
+import { createArticleAPI} from "@/apis/article.js";
+import {useChannel} from "@/hooks/useChannel.js";
 
 const {Option} = Select
 
 const Publish = () => {
-    //获取频道列表
-    const [channelList, setChannelList] = useState([])
-    useEffect(() => {
-        const getChannelList = async () => {
-            const res = await channelAPI()
-            setChannelList(res.data.channels)
-        }
-        getChannelList()
-    }, [])
+    const {channelList} = useChannel()
     //提交表单
     const onFinsh = (val) => {
         //校验图片数量是否和模式相等
