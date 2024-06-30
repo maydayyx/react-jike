@@ -17,26 +17,26 @@ const Publish = () => {
     //提交表单
     const onFinsh = (val) => {
         //校验图片数量是否和模式相等
-        if(imageList.length!==imageType) return message.warning('封面数量不匹配！')
-        const {title,content,channel_id} = val
+        if (imageList.length !== imageType) return message.warning('封面数量不匹配！')
+        const {title, content, channel_id} = val
         const reqData = {
             title: title,
             content: content,
             cover: {
-                type: imageType ,
-                images: imageList.map(item=>item.response.data.url)
+                type: imageType,
+                images: imageList.map(item => item.response.data.url)
             },
             channel_id: channel_id
         }
         createArticleAPI(reqData)
     }
     //上传图片
-    const [imageList,setImageList] = useState([])
+    const [imageList, setImageList] = useState([])
     const onUploadChange = (val) => {
         setImageList(val.fileList)
     }
     //选择图片类型
-    const [imageType,setImageType] = useState(0)
+    const [imageType, setImageType] = useState(0)
     const onTypeChange = (e) => {
         setImageType(e.target.value)
     }
@@ -46,23 +46,25 @@ const Publish = () => {
     const articleId = searchParams.get('id')
     const [form] = Form.useForm()
     useEffect(() => {
-       async function getArticleDetail() {
-           const res = await getArticleById(articleId)
-           const data = res.data
-           form.setFieldsValue({
-               ...data,
-               type:data.cover.type
-           })
-           setImageType(data.cover.type)
-           setImageList(data.cover.images.map(url=>{
-               return { url}
-           }))
-       }
-       getArticleDetail()
-    }, [articleId,form]);
+        async function getArticleDetail() {
+            const res = await getArticleById(articleId)
+            const data = res.data
+            form.setFieldsValue({
+                ...data,
+                type: data.cover.type
+            })
+            setImageType(data.cover.type)
+            setImageList(data.cover.images.map(url => {
+                return {url}
+            }))
+        }
+
+        articleId && getArticleDetail()
+    }, [articleId, form]);
     return (<div className="publish">
         <Card
-            title={<Breadcrumb items={[{title: <Link to={'/'}>首页</Link>}, {title: '发布文章'},]}
+            title={<Breadcrumb items={[{title: <Link to={'/'}>首页</Link>},
+                {title: `${articleId ? '编辑' : '发布'}文章`},]}
             />}
         >
             <Form
@@ -100,20 +102,20 @@ const Publish = () => {
                             <Radio value={0}>无图</Radio>
                         </Radio.Group>
                     </Form.Item>
-                    {imageType>0&&
-                    <Upload
-                        name='image'
-                        listType="picture-card"
-                        showUploadList
-                        action={'http://geek.itheima.net/v1_0/upload'}
-                        onChange={onUploadChange}
-                        maxCount={imageType}
-                        fileList={imageList}
-                    >
-                        <div style={{ marginTop: 8 }}>
-                            <PlusOutlined />
-                        </div>
-                    </Upload>
+                    {imageType > 0 &&
+                        <Upload
+                            name='image'
+                            listType="picture-card"
+                            showUploadList
+                            action={'http://geek.itheima.net/v1_0/upload'}
+                            onChange={onUploadChange}
+                            maxCount={imageType}
+                            fileList={imageList}
+                        >
+                            <div style={{marginTop: 8}}>
+                                <PlusOutlined/>
+                            </div>
+                        </Upload>
                     }
                 </Form.Item>
                 <Form.Item
