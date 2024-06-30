@@ -7,12 +7,17 @@ import img404 from '@/assets/error.png'
 import {useChannel} from "@/hooks/useChannel.js";
 import {useEffect, useState} from "react";
 import {getArtcileListAPI} from '@/apis/article.js'
+
 const {Option} = Select
 const {RangePicker} = DatePicker
 
 const Article = () => {
     const {channelList} = useChannel()
     // 准备列数据
+    const status = {
+        1: <Tag color="orange">待审核</Tag>,
+        2: <Tag color="green">审核通过</Tag>
+    }
     const columns = [
         {
             title: '封面',
@@ -30,7 +35,7 @@ const Article = () => {
         {
             title: '状态',
             dataIndex: 'status',
-            render: data => <Tag color="green">审核通过</Tag>
+            render: data => status[data]
         },
         {
             title: '发布时间',
@@ -82,14 +87,15 @@ const Article = () => {
     ]
 
     //获取文章列表
-    const [list,setList] = useState([])
-    const [count,setCount] = useState(0)
+    const [list, setList] = useState([])
+    const [count, setCount] = useState(0)
     useEffect(() => {
-       async function getList() {
-          const res = await getArtcileListAPI()
-           setList(res.data.results)
-           setCount(res.data.total_count)
+        async function getList() {
+            const res = await getArtcileListAPI()
+            setList(res.data.results)
+            setCount(res.data.total_count)
         }
+
         getList()
     }, []);
     return (
@@ -119,7 +125,7 @@ const Article = () => {
                             style={{width: 120}}
                         >
                             {
-                                channelList.map(item=>(
+                                channelList.map(item => (
                                     <Option value={item.id} key={item.id}>{item.name}</Option>
                                 ))
                             }
@@ -138,10 +144,10 @@ const Article = () => {
                     </Form.Item>
                 </Form>
             </Card>
-                {/*        */}
-                <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
-                    <Table rowKey="id" columns={columns} dataSource={list}/>
-                </Card>
+            {/*        */}
+            <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
+                <Table rowKey="id" columns={columns} dataSource={list}/>
+            </Card>
         </div>
     )
 }
