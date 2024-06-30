@@ -7,7 +7,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import {useEffect, useState} from "react";
-import {channelAPI} from "@/apis/article.js";
+import {channelAPI, createArticleAPI} from "@/apis/article.js";
 
 const {Option} = Select
 
@@ -20,7 +20,21 @@ const Publish = () => {
             setChannelList(res.data.channels)
         }
         getChannelList()
-    },[])
+    }, [])
+    //提交表单
+    const onFinsh = (val) => {
+        const {title,content,channel_id} = val
+        const reqData = {
+            title: title,
+            content: content,
+            cover: {
+                type: 0,
+                images: []
+            },
+            channel_id: channel_id
+        }
+        createArticleAPI(reqData)
+    }
     return (<div className="publish">
         <Card
             title={<Breadcrumb items={[{title: <Link to={'/'}>首页</Link>}, {title: '发布文章'},]}
@@ -30,6 +44,7 @@ const Publish = () => {
                 labelCol={{span: 4}}
                 wrapperCol={{span: 16}}
                 initialValues={{type: 1}}
+                onFinish={onFinsh}
             >
                 <Form.Item
                     label="标题"
@@ -45,7 +60,7 @@ const Publish = () => {
                 >
                     <Select placeholder="请选择文章频道" style={{width: 400}}>
                         {
-                            channelList.map(item=>(
+                            channelList.map(item => (
                                 <Option key={item.id} value={item.id}>{item.name}</Option>
                             ))
                         }
