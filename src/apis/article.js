@@ -18,7 +18,18 @@ function createArticleAPI(data) {
     })
 }
 
+//获取文章列表
+function getArtcileListAPI(params) {
+    return $f({
+        url:'/mp/articles',
+        method:'GET',
+        params
+    })
+}
+
+
 export {
     channelAPI,
-    createArticleAPI
+    createArticleAPI,
+    getArtcileListAPI
 }
