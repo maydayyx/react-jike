@@ -2,12 +2,12 @@ import {
     Card, Breadcrumb, Form, Button, Radio, Input, Upload, Space, Select, message
 } from 'antd'
 import {PlusOutlined} from '@ant-design/icons'
-import {Link} from 'react-router-dom'
+import {Link, useSearchParams} from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import {useState} from "react";
-import { createArticleAPI} from "@/apis/article.js";
+import {useEffect, useState} from "react";
+import {createArticleAPI, getArticleById} from "@/apis/article.js";
 import {useChannel} from "@/hooks/useChannel.js";
 
 const {Option} = Select
@@ -40,6 +40,18 @@ const Publish = () => {
     const onTypeChange = (e) => {
         setImageType(e.target.value)
     }
+
+    //回填数据
+    const [searchParams] = useSearchParams()
+    const articleId = searchParams.get('id')
+    const [form] = Form.useForm()
+    useEffect(() => {
+       async function getArticleDetail() {
+           const res = await getArticleById(articleId)
+           form.setFieldsValue(res.data)
+       }
+       getArticleDetail()
+    }, [articleId,form]);
     return (<div className="publish">
         <Card
             title={<Breadcrumb items={[{title: <Link to={'/'}>首页</Link>}, {title: '发布文章'},]}
@@ -50,6 +62,7 @@ const Publish = () => {
                 wrapperCol={{span: 16}}
                 initialValues={{type: 0}}
                 onFinish={onFinsh}
+                form={form}
             >
                 <Form.Item
                     label="标题"

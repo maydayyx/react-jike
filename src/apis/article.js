@@ -27,10 +27,18 @@ function getArtcileListAPI(params) {
     })
 }
 
+//删除文章
 function delArticleAPI(id) {
     return $f({
-        url:`mp/articles/${id}`,
+        url:`/mp/articles/${id}`,
         method:'DELETE'
+    })
+}
+
+//获取文章详情
+function getArticleById(id) {
+    return $f({
+        url:`/mp/articles/${id}`
     })
 }
 
@@ -38,5 +46,6 @@ export {
     channelAPI,
     createArticleAPI,
     getArtcileListAPI,
-    delArticleAPI
+    delArticleAPI,
+    getArticleById
 }
