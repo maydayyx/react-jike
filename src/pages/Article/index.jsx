@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {Card, Breadcrumb, Form, Button, Radio, DatePicker, Select,Popconfirm} from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import {Table, Tag, Space} from 'antd'
@@ -7,11 +7,11 @@ import img404 from '@/assets/error.png'
 import {useChannel} from "@/hooks/useChannel.js";
 import {useEffect, useState} from "react";
 import {delArticleAPI, getArtcileListAPI} from '@/apis/article.js'
-
 const {Option} = Select
 const {RangePicker} = DatePicker
 
 const Article = () => {
+    const navigate = useNavigate()
     const {channelList} = useChannel()
     // 准备列数据
     const status = {
@@ -59,7 +59,7 @@ const Article = () => {
 
                 return (
                     <Space size="middle">
-                        <Button type="primary" shape="circle" icon={<EditOutlined/>}/>
+                        <Button onClick={()=>navigate(`/publish?id=${data.id}`)} type="primary" shape="circle" icon={<EditOutlined/>}/>
                         <Popconfirm
                             title="删除文章"
                             description="确认要删除当前文章吗?"
