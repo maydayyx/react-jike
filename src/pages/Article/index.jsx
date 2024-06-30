@@ -1,12 +1,12 @@
 import {Link} from 'react-router-dom'
-import {Card, Breadcrumb, Form, Button, Radio, DatePicker, Select} from 'antd'
+import {Card, Breadcrumb, Form, Button, Radio, DatePicker, Select,Popconfirm} from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import {Table, Tag, Space} from 'antd'
 import {EditOutlined, DeleteOutlined} from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import {useChannel} from "@/hooks/useChannel.js";
 import {useEffect, useState} from "react";
-import {getArtcileListAPI} from '@/apis/article.js'
+import {delArticleAPI, getArtcileListAPI} from '@/apis/article.js'
 
 const {Option} = Select
 const {RangePicker} = DatePicker
@@ -56,15 +56,24 @@ const Article = () => {
         {
             title: '操作',
             render: data => {
+
                 return (
                     <Space size="middle">
                         <Button type="primary" shape="circle" icon={<EditOutlined/>}/>
-                        <Button
-                            type="primary"
-                            danger
-                            shape="circle"
-                            icon={<DeleteOutlined/>}
-                        />
+                        <Popconfirm
+                            title="删除文章"
+                            description="确认要删除当前文章吗?"
+                            onConfirm={()=>onConfirm(data)}
+                            okText="确认"
+                            cancelText="取消"
+                        >
+                            <Button
+                                type="primary"
+                                danger
+                                shape="circle"
+                                icon={<DeleteOutlined/>}
+                            />
+                        </Popconfirm>
                     </Space>
                 )
             }
@@ -86,13 +95,13 @@ const Article = () => {
         }
     ]
     //筛选功能
-    const [reqData,setReqData] = useState({
-        status:'',
-        channel_id:'',
-        begin_pubdate:'',
-        end_pubdate:'',
-        page:1,
-        per_page:4
+    const [reqData, setReqData] = useState({
+        status: '',
+        channel_id: '',
+        begin_pubdate: '',
+        end_pubdate: '',
+        page: 1,
+        per_page: 4
     })
     //获取文章列表
     const [list, setList] = useState([])
@@ -103,16 +112,17 @@ const Article = () => {
             setList(res.data.results)
             setCount(res.data.total_count)
         }
+
         getList()
     }, [reqData]);
     const onFinsh = (val) => {
-       setReqData({
-           ...reqData,
-           channel_id: val.channel_id,
-           status:val.status,
-           begin_pubdate: val.date[0].format('YYYY-MM-DD'),
-           end_pubdate: val.date[1].format('YYYY-MM-DD'),
-       })
+        setReqData({
+            ...reqData,
+            channel_id: val.channel_id,
+            status: val.status,
+            begin_pubdate: val.date[0].format('YYYY-MM-DD'),
+            end_pubdate: val.date[1].format('YYYY-MM-DD'),
+        })
         //重新拉取文章列表 复用逻辑
     }
     //分页
@@ -120,6 +130,13 @@ const Article = () => {
         setReqData({
             ...reqData,
             page
+        })
+    }
+    //删除
+    const onConfirm = async ({id}) => {
+        await delArticleAPI(id)
+        setReqData({
+            ...reqData
         })
     }
     return (
@@ -171,9 +188,9 @@ const Article = () => {
             {/*        */}
             <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
                 <Table rowKey="id" columns={columns} dataSource={list} pagination={{
-                    total:count,
-                    pageSize:reqData.per_page,
-                    onChange:onPageChange
+                    total: count,
+                    pageSize: reqData.per_page,
+                    onChange: onPageChange
                 }}/>
             </Card>
         </div>

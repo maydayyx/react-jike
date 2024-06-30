@@ -27,9 +27,16 @@ function getArtcileListAPI(params) {
     })
 }
 
+function delArticleAPI(id) {
+    return $f({
+        url:`mp/articles/${id}`,
+        method:'DELETE'
+    })
+}
 
 export {
     channelAPI,
     createArticleAPI,
-    getArtcileListAPI
+    getArtcileListAPI,
+    delArticleAPI
 }
