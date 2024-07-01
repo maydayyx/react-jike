@@ -42,10 +42,22 @@ function getArticleById(id) {
     })
 }
 
+//更新文章表单
+function updateArticleAPI(data) {
+    return $f({
+        url: `/mp/articles/${data.id}?draft=false`,
+        method: 'PUT',
+        data
+    })
+}
+
+
+
 export {
     channelAPI,
     createArticleAPI,
     getArtcileListAPI,
     delArticleAPI,
-    getArticleById
+    getArticleById,
+    updateArticleAPI
 }

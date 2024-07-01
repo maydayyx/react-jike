@@ -7,7 +7,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import {useEffect, useState} from "react";
-import {createArticleAPI, getArticleById} from "@/apis/article.js";
+import {createArticleAPI, getArticleById, updateArticleAPI} from "@/apis/article.js";
 import {useChannel} from "@/hooks/useChannel.js";
 
 const {Option} = Select
@@ -24,11 +24,21 @@ const Publish = () => {
             content: content,
             cover: {
                 type: imageType,
-                images: imageList.map(item => item.response.data.url)
+                images: imageList.map(item => {
+                    if(item.response) {
+                        return item.response.data.url
+                    }else {
+                       return item.url
+                    }
+                })
             },
             channel_id: channel_id
         }
-        createArticleAPI(reqData)
+        if(articleId){
+            updateArticleAPI({...reqData,id:articleId})
+        }else{
+            createArticleAPI(reqData)
+        }
     }
     //上传图片
     const [imageList, setImageList] = useState([])
@@ -133,7 +143,7 @@ const Publish = () => {
                 <Form.Item wrapperCol={{offset: 4}}>
                     <Space>
                         <Button size="large" type="primary" htmlType="submit">
-                            发布文章
+                            {articleId?'修改文章': ' 发布文章'}
                         </Button>
                     </Space>
                 </Form.Item>
